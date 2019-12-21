@@ -1,4 +1,4 @@
-package com.san4o.just4fun.pocketscanner.scan.process
+package com.san4o.just4fun.pocketscanner.ui
 
 
 import android.os.Bundle
@@ -13,19 +13,21 @@ import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import com.san4o.just4fun.pocketscanner.R
-import com.san4o.just4fun.pocketscanner.scan.BarcodeType
-import com.san4o.just4fun.pocketscanner.scan.ScanningState
-import com.san4o.just4fun.pocketscanner.scan.ScanningViewModel
+import com.san4o.just4fun.pocketscanner.domain.BarcodeType
+import com.san4o.just4fun.pocketscanner.presentation.ScannedBarcode
+import com.san4o.just4fun.pocketscanner.presentation.ScanningContract
+import com.san4o.just4fun.pocketscanner.presentation.ScanningState
+import com.san4o.just4fun.pocketscanner.presentation.ScanningViewModel
 import kotlinx.android.synthetic.main.fragment_scanner.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
 import java.util.*
 
-
 /**
  * A simple [Fragment] subclass.
  */
-class ScannerFragment : Fragment(), BarcodeCallback, ScanningContract.Observer {
+class ScannerFragment : Fragment(), BarcodeCallback,
+    ScanningContract.Observer {
 
     val viewModel by sharedViewModel<ScanningViewModel>()
 

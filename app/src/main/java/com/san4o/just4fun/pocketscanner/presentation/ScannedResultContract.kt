@@ -1,8 +1,7 @@
-package com.san4o.just4fun.pocketscanner.scan.result
+package com.san4o.just4fun.pocketscanner.presentation
 
 import android.graphics.Bitmap
 import androidx.databinding.ObservableField
-import com.san4o.just4fun.pocketscanner.scan.ScanningState
 
 interface ScannedResultContract {
     interface ViewState {

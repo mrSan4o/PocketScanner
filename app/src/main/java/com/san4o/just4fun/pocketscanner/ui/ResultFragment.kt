@@ -1,4 +1,4 @@
-package com.san4o.just4fun.pocketscanner.scan.result
+package com.san4o.just4fun.pocketscanner.ui
 
 import android.content.Intent
 import android.net.Uri
@@ -13,14 +13,13 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.san4o.just4fun.pocketscanner.R
 import com.san4o.just4fun.pocketscanner.databinding.FragmentResultBinding
-import com.san4o.just4fun.pocketscanner.scan.ScanningState
-import com.san4o.just4fun.pocketscanner.scan.ScanningViewModel
+import com.san4o.just4fun.pocketscanner.presentation.*
 import kotlinx.android.synthetic.main.fragment_result.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.util.*
 
-
-class ResultFragment : Fragment(), ScannedResultContract.Observer {
+class ResultFragment : Fragment(),
+    ScannedResultContract.Observer {
 
     val viewModel by sharedViewModel<ScanningViewModel>()
 
@@ -78,7 +77,6 @@ class ResultFragment : Fragment(), ScannedResultContract.Observer {
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage)
         startActivity(Intent.createChooser(shareIntent, "Послать результат"))
     }
-
 }
 
 class ActionTextWatcher(private val action: () -> Unit) : TextWatcher {

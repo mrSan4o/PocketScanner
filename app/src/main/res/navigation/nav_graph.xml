@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/scannerFragment"
-        android:name="com.san4o.just4fun.pocketscanner.scan.process.ScannerFragment"
+        android:name="com.san4o.just4fun.pocketscanner.ui.ScannerFragment"
         android:label="fragment_scanner"
         tools:layout="@layout/fragment_scanner" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/resultFragment"
-        android:name="com.san4o.just4fun.pocketscanner.scan.result.ResultFragment"
+        android:name="com.san4o.just4fun.pocketscanner.ui.ResultFragment"
         android:label="fragment_result"
         tools:layout="@layout/fragment_result" >
         <action

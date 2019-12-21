@@ -1,4 +1,4 @@
-package com.san4o.just4fun.pocketscanner.core
+package com.san4o.just4fun.pocketscanner.ui.base
 
 import android.graphics.Bitmap
 import android.widget.ImageView

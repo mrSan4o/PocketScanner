@@ -1,9 +1,10 @@
-package com.san4o.just4fun.pocketscanner
+package com.san4o.just4fun.pocketscanner.ui
 
 import android.os.Bundle
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
-import com.san4o.just4fun.pocketscanner.scan.ScanningViewModel
+import com.san4o.just4fun.pocketscanner.R
+import com.san4o.just4fun.pocketscanner.presentation.ScanningViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
@@ -20,6 +21,11 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         setContentView(R.layout.activity_main)
+    }
+
+    override fun onBackPressed() {
+
+        viewModel.onBackPressed()
     }
 
 }

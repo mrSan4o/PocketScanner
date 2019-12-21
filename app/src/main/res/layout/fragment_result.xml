@@ -7,16 +7,16 @@
 
         <variable
             name="state"
-            type="com.san4o.just4fun.pocketscanner.result.ScannedResultContract.ViewState" />
+            type="com.san4o.just4fun.pocketscanner.presentation.ScannedResultContract.ViewState" />
         <variable
             name="interactor"
-            type="com.san4o.just4fun.pocketscanner.result.ScannedResultContract.Interactor" />
+            type="com.san4o.just4fun.pocketscanner.presentation.ScannedResultContract.Interactor" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".scan.result.ResultFragment">
+        tools:context=".ui.ResultFragment">
 
         <TextView
             android:id="@+id/date"

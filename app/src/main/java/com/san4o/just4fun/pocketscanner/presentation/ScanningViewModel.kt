@@ -1,21 +1,23 @@
-package com.san4o.just4fun.pocketscanner.scan
+package com.san4o.just4fun.pocketscanner.presentation
 
+import android.graphics.Bitmap
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import com.san4o.just4fun.pocketscanner.core.toFullDatetimeFormat
-import com.san4o.just4fun.pocketscanner.scan.process.ScannedBarcode
-import com.san4o.just4fun.pocketscanner.scan.process.ScanningContract
-import com.san4o.just4fun.pocketscanner.scan.result.OpenParams
-import com.san4o.just4fun.pocketscanner.scan.result.ResultViewState
-import com.san4o.just4fun.pocketscanner.scan.result.ScannedResultContract
-import com.san4o.just4fun.pocketscanner.scan.result.ShareParams
+import androidx.lifecycle.viewModelScope
+import com.san4o.just4fun.pocketscanner.domain.Barcode
+import com.san4o.just4fun.pocketscanner.domain.BarcodeInteractor
+import com.san4o.just4fun.pocketscanner.domain.CreateBarcodeParams
+import com.san4o.just4fun.pocketscanner.presentation.base.toFullDatetimeFormat
+import kotlinx.coroutines.launch
 import ru.sportmaster.android.driven.salespoint.presentation.core.single.SingleLiveEvent
 import timber.log.Timber
 import java.util.*
 
-class ScanningViewModel : ViewModel(),
+class ScanningViewModel(
+    private val interactor: BarcodeInteractor
+) : ViewModel(),
     ScannedResultContract.Interactor,
     ScanningContract.Interator {
     val viewState = ResultViewState()
@@ -30,24 +32,42 @@ class ScanningViewModel : ViewModel(),
             val scanningState = it
             when (scanningState) {
                 is ScanningState.RESULT -> {
-                    val barcode = scanningState.data
-                    viewState.date.set(scanningState.date.toFullDatetimeFormat())
+                    val barcode = scanningState.barcode
+                    viewState.date.set(barcode.date.toFullDatetimeFormat())
                     viewState.title.set("")
-                    viewState.barcode.set(barcode.text)
-                    viewState.bitmap.set(barcode.bitmap)
+                    viewState.barcode.set(barcode.data)
+                    viewState.bitmap.set(scanningState.bitmap)
                 }
+            }
+        }
+
+        viewModelScope.launch {
+            Timber.d("      findAll barcodes:")
+            interactor.findAll().forEach {
+                Timber.d("      >>> $it")
             }
         }
 
     }
 
     override fun onBarcodeScanned(barcode: ScannedBarcode) {
-        state.postValue(
-            ScanningState.RESULT(
-                barcode,
-                Date()
+        val date = Date()
+        viewModelScope.launch {
+            val saved = interactor.update(
+                CreateBarcodeParams(
+                    type = barcode.type,
+                    date = date,
+                    name = "",
+                    data = barcode.text
+                )
             )
-        )
+            state.postValue(
+                ScanningState.RESULT(
+                    saved,
+                    barcode.bitmap
+                )
+            )
+        }
     }
 
     override fun onBackToScanning() {
@@ -58,7 +78,7 @@ class ScanningViewModel : ViewModel(),
     override fun onShareResult() {
         onResultState {
             share.call(
-                ShareParams(it.data.text)
+                ShareParams(it.barcode.data)
             )
         }
     }
@@ -66,13 +86,19 @@ class ScanningViewModel : ViewModel(),
     override fun onOpenResult() {
         onResultState {
             open.call(
-                OpenParams(it.data.text)
+                OpenParams(it.barcode.data)
             )
         }
     }
 
     override fun saveTitleState() {
-        Timber.d("saveTitleState : %s", viewState.title.get())
+        val name = viewState.title.get()
+        onResultState {
+            viewModelScope.launch {
+                Timber.d("saveTitleState : %s", name)
+                interactor.updateName(it.barcode.id, name ?: "")
+            }
+        }
     }
 
     fun observe(owner: LifecycleOwner, observer: ScanningContract.Observer) {
@@ -92,13 +118,22 @@ class ScanningViewModel : ViewModel(),
             }
         }
     }
+
+    fun onBackPressed() {
+        when (state.value) {
+            is ScanningState.SCANNING -> {
+            }
+            is ScanningState.RESULT -> state.value = ScanningState.SCANNING
+        }
+
+    }
 }
 
 sealed class ScanningState {
     object SCANNING : ScanningState()
     data class RESULT(
-        val data: ScannedBarcode,
-        val date: Date
+        val barcode: Barcode,
+        val bitmap: Bitmap?
     ) : ScanningState()
 }
 

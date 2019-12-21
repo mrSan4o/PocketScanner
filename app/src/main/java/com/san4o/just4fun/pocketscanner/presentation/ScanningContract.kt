@@ -1,8 +1,7 @@
-package com.san4o.just4fun.pocketscanner.scan.process
+package com.san4o.just4fun.pocketscanner.presentation
 
 import android.graphics.Bitmap
-import com.san4o.just4fun.pocketscanner.scan.BarcodeType
-import com.san4o.just4fun.pocketscanner.scan.ScanningState
+import com.san4o.just4fun.pocketscanner.domain.BarcodeType
 
 interface ScanningContract {
     interface Interator {
