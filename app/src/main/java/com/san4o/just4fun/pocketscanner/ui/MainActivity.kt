@@ -3,13 +3,12 @@ package com.san4o.just4fun.pocketscanner.ui
 import android.os.Bundle
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
 import com.san4o.just4fun.pocketscanner.R
-import com.san4o.just4fun.pocketscanner.presentation.ScanningViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
-    val viewModel by viewModel<ScanningViewModel>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,8 +23,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-
-        viewModel.onBackPressed()
+        findNavController(R.id.nav_host_fragment).popBackStack()
     }
 
 }

@@ -1,4 +1,4 @@
-package com.san4o.just4fun.pocketscanner.presentation
+package com.san4o.just4fun.pocketscanner.presentation.result
 
 import android.graphics.Bitmap
 import androidx.databinding.ObservableField
@@ -12,16 +12,18 @@ interface ScannedResultContract {
     }
 
     interface Interactor {
-        fun onBackToScanning()
         fun onShareResult()
+        fun onCopyResultInMemory()
         fun onOpenResult()
         fun saveTitleState()
+
     }
 
     interface Observer {
-        fun stateChanged(state: ScanningState)
         fun shareBarcodeResult(data: ShareParams)
         fun openBarcodeResult(data: OpenParams)
+        fun notifyMessage(message: String)
+
     }
 }
 

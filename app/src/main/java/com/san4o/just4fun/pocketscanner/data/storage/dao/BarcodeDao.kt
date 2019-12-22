@@ -24,4 +24,7 @@ interface BarcodeDao {
 
     @Query("UPDATE barocode set date = :date where id = :id")
     suspend fun updateDate(id: Long, date: Date)
+
+    @Query("select * from barocode where id = :id")
+    suspend fun find(id: Long): BarcodeEntity?
 }

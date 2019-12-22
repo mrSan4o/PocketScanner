@@ -30,6 +30,11 @@ class BarcodeRepositoryImpl(
         )
     }
 
+    override suspend fun find(id: Long): Barcode? {
+        return barcodeDao.find(id)
+            ?.let { toBarcode(it) }
+    }
+
     override suspend fun find(barcode: String, type: BarcodeType): Barcode? {
         return barcodeDao.find(barcode, type.toBarcodeEntityType())
             ?.let { toBarcode(it) }

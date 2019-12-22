@@ -8,20 +8,23 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.san4o.just4fun.pocketscanner.R
 import com.san4o.just4fun.pocketscanner.databinding.FragmentResultBinding
-import com.san4o.just4fun.pocketscanner.presentation.*
+import com.san4o.just4fun.pocketscanner.presentation.result.*
+import com.san4o.just4fun.pocketscanner.ui.base.toastLong
 import kotlinx.android.synthetic.main.fragment_result.*
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.util.*
 
 class ResultFragment : Fragment(),
     ScannedResultContract.Observer {
 
-    val viewModel by sharedViewModel<ScanningViewModel>()
+    lateinit var viewModel: ScanningResultViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +37,9 @@ class ResultFragment : Fragment(),
             false
         )
 
+        val model: ScanningResultViewModel by viewModel { parametersOf(getFromArguments(arguments)) }
+        viewModel = model
+
         binding.state = viewModel.viewState
         binding.interactor = viewModel
 
@@ -42,6 +48,14 @@ class ResultFragment : Fragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        scanButton.setOnClickListener {
+            findNavController().navigate(R.id.action_resultFragment_to_scannerFragment)
+        }
+
+        historyButton.setOnClickListener {
+            findNavController().navigate(R.id.action_resultFragment_to_historyFragment)
+        }
 
         viewModel.observe(this, this)
 
@@ -59,10 +73,8 @@ class ResultFragment : Fragment(),
         startActivity(i)
     }
 
-    override fun stateChanged(state: ScanningState) {
-        if (state == ScanningState.SCANNING) {
-            findNavController().navigate(R.id.action_resultFragment_to_scannerFragment)
-        }
+    override fun notifyMessage(message: String) {
+        toastLong(message)
     }
 
     override fun shareBarcodeResult(data: ShareParams) {
@@ -76,6 +88,24 @@ class ResultFragment : Fragment(),
         var shareMessage = scannedResult
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage)
         startActivity(Intent.createChooser(shareIntent, "Послать результат"))
+    }
+
+    companion object {
+        const val ID = "barcode.id"
+        const val BITMAP = "barcode.bitmap"
+        fun arguments(params: BarcodeParams): Bundle {
+            return bundleOf(
+                ID to params.id,
+                BITMAP to params.bitmap
+            )
+        }
+
+        fun getFromArguments(bundle: Bundle?): BarcodeParams {
+            return BarcodeParams(
+                bundle?.getLong(ID)!!,
+                bundle.getParcelable(BITMAP)
+            )
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-package com.san4o.just4fun.pocketscanner.presentation
+package com.san4o.just4fun.pocketscanner.presentation.result
 
 import android.graphics.Bitmap
 import androidx.databinding.ObservableField

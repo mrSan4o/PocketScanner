@@ -1,11 +1,11 @@
 package com.san4o.just4fun.pocketscanner.ui
 
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.ResultPoint
@@ -14,22 +14,18 @@ import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import com.san4o.just4fun.pocketscanner.R
 import com.san4o.just4fun.pocketscanner.domain.BarcodeType
-import com.san4o.just4fun.pocketscanner.presentation.ScannedBarcode
-import com.san4o.just4fun.pocketscanner.presentation.ScanningContract
-import com.san4o.just4fun.pocketscanner.presentation.ScanningState
-import com.san4o.just4fun.pocketscanner.presentation.ScanningViewModel
+import com.san4o.just4fun.pocketscanner.presentation.scanner.ScannedBarcode
+import com.san4o.just4fun.pocketscanner.presentation.scanner.ScannerViewModel
 import kotlinx.android.synthetic.main.fragment_scanner.*
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
-import java.util.*
 
 /**
  * A simple [Fragment] subclass.
  */
-class ScannerFragment : Fragment(), BarcodeCallback,
-    ScanningContract.Observer {
+class ScannerFragment : Fragment(), BarcodeCallback {
 
-    val viewModel by sharedViewModel<ScanningViewModel>()
+    val viewModel by viewModel<ScannerViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,7 +38,14 @@ class ScannerFragment : Fragment(), BarcodeCallback,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.observe(this, this)
+        historyButton.setOnClickListener {
+            findNavController().navigate(R.id.action_scannerFragment_to_historyFragment)
+        }
+
+        viewModel.navigateToResult.observe(this, Observer {
+            val args = ResultFragment.arguments(it)
+            findNavController().navigate(R.id.action_scannerFragment_to_resultFragment, args)
+        })
 
         scannerLayout.barcodeView.decoderFactory = DefaultDecoderFactory(
             listOf(BarcodeFormat.QR_CODE)
@@ -50,33 +53,12 @@ class ScannerFragment : Fragment(), BarcodeCallback,
         scannerLayout.decodeSingle(this)
         scannerLayout.resume()
 
-        val timer = Timer()
-        timer.schedule(
-            object :TimerTask(){
-                override fun run() {
-                    viewModel.onBarcodeScanned(
-                        ScannedBarcode(
-                            type = BarcodeType.QRCODE,
-                            bitmap = null,
-                            text = "http://yandex.ru"
-                        )
-                    )
-                }
-            },
-            2000
-        )
-    }
-
-    override fun stateChanged(state: ScanningState) {
-        if (state is ScanningState.RESULT){
-            findNavController().navigate(R.id.action_scannerFragment_to_resultFragment)
-        }
     }
 
     override fun barcodeResult(result: BarcodeResult?) {
         Timber.d("result : $result")
         val barcodeFormat = result?.barcodeFormat
-        viewModel.onBarcodeScanned(
+        val barcode =
             ScannedBarcode(
                 type = when (barcodeFormat) {
                     BarcodeFormat.QR_CODE -> BarcodeType.QRCODE
@@ -85,7 +67,8 @@ class ScannerFragment : Fragment(), BarcodeCallback,
                 bitmap = result.bitmap,
                 text = result.text
             )
-        )
+
+        viewModel.onBarcodeScanned(barcode)
     }
 
     override fun possibleResultPoints(result: MutableList<ResultPoint>?) {
