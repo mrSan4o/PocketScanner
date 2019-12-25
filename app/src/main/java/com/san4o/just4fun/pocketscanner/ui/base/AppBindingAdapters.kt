@@ -15,12 +15,15 @@ object AppBindingAdapters {
     fun setTextViewText(view: TextView, text: String?) {
         view.text = text ?: ""
     }
+
     @JvmStatic
     @BindingAdapter("app:bind_bitmap")
     fun setImageViewBitmap(view: ImageView, bitmap: Bitmap?) {
         bitmap?.let { view.setImageBitmap(it) }
+        view.setVisibile(bitmap != null)
 
     }
+
     @JvmStatic
     @BindingAdapter("app:bind_text")
     fun setEditText(view: TextInputEditText, text: String?) {
@@ -28,11 +31,13 @@ object AppBindingAdapters {
             view.setText(text ?: "")
         }
     }
+
     @JvmStatic
     @InverseBindingAdapter(attribute = "app:bind_text")
     fun getEditText(view: TextInputEditText): String {
         return view.text?.toString() ?: ""
     }
+
     @JvmStatic
     @BindingAdapter("app:bind_textAttrChanged")
     fun setEditTextListener(view: TextInputEditText, listener: InverseBindingListener) {
