@@ -3,45 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/scannerFragment">
+    app:startDestination="@id/historyFragment">
 
     <fragment
-        android:id="@+id/scannerFragment"
-        android:name="com.san4o.just4fun.pocketscanner.ui.ScannerFragment"
-        android:label="fragment_scanner"
-        tools:layout="@layout/fragment_scanner" >
-        <action
-            android:id="@+id/action_scannerFragment_to_resultFragment"
-            app:destination="@id/resultFragment" />
-        <action
-            android:id="@+id/action_scannerFragment_to_historyFragment"
-            app:destination="@id/historyFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/resultFragment"
-        android:name="com.san4o.just4fun.pocketscanner.ui.ResultFragment"
-        android:label="fragment_result"
-        tools:layout="@layout/fragment_result" >
-        <action
-            android:id="@+id/action_resultFragment_to_scannerFragment"
-            app:destination="@id/scannerFragment"
-            app:popUpTo="@+id/scannerFragment" />
-        <action
-            android:id="@+id/action_resultFragment_to_historyFragment"
-            app:destination="@id/historyFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/historyFragment"
-        android:name="com.san4o.just4fun.pocketscanner.ui.HistoryFragment"
+        android:name="com.san4o.just4fun.pocketscanner.ui.history.HistoryFragment"
         android:label="fragment_history"
         tools:layout="@layout/fragment_history">
+
         <action
-            android:id="@+id/action_historyFragment_to_scannerFragment"
-            app:destination="@id/scannerFragment"
-            app:popUpTo="@+id/scannerFragment" />
+            android:id="@+id/action_historyFragment_to_generateCodeFragment"
+            app:destination="@id/generateCodeFragment" />
         <action
-            android:id="@+id/action_historyFragment_to_resultFragment"
-            app:destination="@id/resultFragment"
-            app:popUpTo="@+id/scannerFragment" />
+            android:id="@+id/action_historyFragment_to_historyItemFragment"
+            app:destination="@id/historyItemFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/generateCodeFragment"
+        android:name="com.san4o.just4fun.pocketscanner.ui.EncodeCodeFragment"
+        android:label="fragment_generate_code"
+        tools:layout="@layout/fragment_encode_code" />
+    <fragment
+        android:id="@+id/historyItemFragment"
+        android:name="com.san4o.just4fun.pocketscanner.ui.history.HistoryItemFragment"
+        android:label="HistoryItemFragment" />
 </navigation>

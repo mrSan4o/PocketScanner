@@ -1,20 +1,29 @@
 package com.san4o.just4fun.pocketscanner.presentation.scanner
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.san4o.just4fun.pocketscanner.domain.CreateBarcodeParams
 import com.san4o.just4fun.pocketscanner.domain.ScannnerInteractor
 import com.san4o.just4fun.pocketscanner.presentation.result.BarcodeParams
 import kotlinx.coroutines.launch
-import ru.sportmaster.android.driven.salespoint.presentation.core.single.LiveEvent
-import ru.sportmaster.android.driven.salespoint.presentation.core.single.SingleLiveEvent
 import java.util.*
 
 class ScannerViewModel(
     private val interactor: ScannnerInteractor
 ) : ViewModel() {
-    private val _navigateToResult = SingleLiveEvent<BarcodeParams>()
-    val navigateToResult: LiveEvent<BarcodeParams> = _navigateToResult
+
+    private val _state = MutableLiveData<ScannerState>()
+    val state: LiveData<ScannerState> = _state
+
+    init {
+        _state.value = ScannerState.Scanning
+    }
+
+    fun resumeScanning() {
+        _state.value = ScannerState.Scanning
+    }
 
     fun onBarcodeScanned(barcode: ScannedBarcode) {
         viewModelScope.launch {
@@ -27,7 +36,7 @@ class ScannerViewModel(
                 )
             )
 
-            _navigateToResult.call(
+            _state.value = ScannerState.Result(
                 BarcodeParams(
                     id,
                     barcode.bitmap
@@ -36,5 +45,10 @@ class ScannerViewModel(
         }
 
     }
+}
+
+sealed class ScannerState {
+    object Scanning : ScannerState()
+    data class Result(val params: BarcodeParams) : ScannerState()
 }
 

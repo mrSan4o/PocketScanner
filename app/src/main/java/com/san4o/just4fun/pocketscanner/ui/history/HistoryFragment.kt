@@ -1,4 +1,4 @@
-package com.san4o.just4fun.pocketscanner.ui
+package com.san4o.just4fun.pocketscanner.ui.history
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -38,18 +38,18 @@ class HistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        scanButton.setOnClickListener {
-            findNavController().navigate(R.id.action_historyFragment_to_scannerFragment)
-        }
-
-        val adapter = HistoryAdapter {
-            val arg = ResultFragment.arguments(
-                BarcodeParams(
-                    id = it
+        val adapter =
+            HistoryAdapter {
+                val arg = BarcodeParams.arguments(
+                    BarcodeParams(
+                        id = it
+                    )
                 )
-            )
-            findNavController().navigate(R.id.action_historyFragment_to_resultFragment, arg)
-        }
+                findNavController().navigate(
+                    R.id.action_historyFragment_to_historyItemFragment,
+                    arg
+                )
+            }
         barcodeContainer.adapter = adapter
         barcodeContainer.layoutManager = LinearLayoutManager(requireContext())
 
@@ -76,7 +76,9 @@ class HistoryAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
-        return HistoryViewHolder.create(parent)
+        return HistoryViewHolder.create(
+            parent
+        )
     }
 
     override fun getItemCount(): Int {
@@ -106,7 +108,9 @@ class HistoryViewHolder(
             val view =
                 viewGroup.inflateBinding<ViewHolderHistoryItemBinding>(R.layout.view_holder_history_item)
 
-            return HistoryViewHolder(view)
+            return HistoryViewHolder(
+                view
+            )
         }
     }
 

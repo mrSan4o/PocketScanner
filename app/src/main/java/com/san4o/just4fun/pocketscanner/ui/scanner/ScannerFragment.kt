@@ -1,12 +1,10 @@
-package com.san4o.just4fun.pocketscanner.ui
+package com.san4o.just4fun.pocketscanner.ui.scanner
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.ResultPoint
 import com.journeyapps.barcodescanner.BarcodeCallback
@@ -16,13 +14,11 @@ import com.san4o.just4fun.pocketscanner.R
 import com.san4o.just4fun.pocketscanner.domain.BarcodeType
 import com.san4o.just4fun.pocketscanner.presentation.scanner.ScannedBarcode
 import com.san4o.just4fun.pocketscanner.presentation.scanner.ScannerViewModel
+import com.san4o.just4fun.pocketscanner.ui.MainActivity
 import kotlinx.android.synthetic.main.fragment_scanner.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
-/**
- * A simple [Fragment] subclass.
- */
 class ScannerFragment : Fragment(), BarcodeCallback {
 
     val viewModel by viewModel<ScannerViewModel>()
@@ -31,7 +27,6 @@ class ScannerFragment : Fragment(), BarcodeCallback {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_scanner, container, false)
     }
 
@@ -39,13 +34,8 @@ class ScannerFragment : Fragment(), BarcodeCallback {
         super.onViewCreated(view, savedInstanceState)
 
         historyButton.setOnClickListener {
-            findNavController().navigate(R.id.action_scannerFragment_to_historyFragment)
+            MainActivity.start(requireContext())
         }
-
-        viewModel.navigateToResult.observe(this, Observer {
-            val args = ResultFragment.arguments(it)
-            findNavController().navigate(R.id.action_scannerFragment_to_resultFragment, args)
-        })
 
         scannerLayout.barcodeView.decoderFactory = DefaultDecoderFactory(
             listOf(BarcodeFormat.QR_CODE)

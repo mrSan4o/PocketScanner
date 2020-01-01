@@ -1,11 +1,13 @@
 package com.san4o.just4fun.pocketscanner
 
+import com.san4o.just4fun.pocketscanner.data.EncodeManagerImpl
 import com.san4o.just4fun.pocketscanner.data.repository.AppStringsProvider
 import com.san4o.just4fun.pocketscanner.data.repository.BarcodeRepositoryImpl
 import com.san4o.just4fun.pocketscanner.data.repository.DeviceManagerImpl
 import com.san4o.just4fun.pocketscanner.data.repository.StringProvider
 import com.san4o.just4fun.pocketscanner.data.storage.AppDatabase
 import com.san4o.just4fun.pocketscanner.domain.*
+import com.san4o.just4fun.pocketscanner.presentation.encoder.EncodeCodeViewModel
 import com.san4o.just4fun.pocketscanner.presentation.history.HistoryViewModel
 import com.san4o.just4fun.pocketscanner.presentation.result.BarcodeParams
 import com.san4o.just4fun.pocketscanner.presentation.result.ScanningResultViewModel
@@ -18,6 +20,7 @@ private val appModule = module {
 
     factory<StringProvider> { AppStringsProvider(get()) }
     factory<DeviceManager> { DeviceManagerImpl(get()) }
+    factory<EncodeManager> { EncodeManagerImpl() }
     factory<BarcodeRepository> { BarcodeRepositoryImpl(get()) }
     factory {
         BarcodeInteractor(
@@ -42,6 +45,10 @@ private val appModule = module {
             stringProvider = get(),
             params = barcode
         )
+    }
+
+    viewModel {
+        EncodeCodeViewModel(get())
     }
 
     viewModel { HistoryViewModel(get()) }
