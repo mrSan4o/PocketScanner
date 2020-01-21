@@ -59,6 +59,10 @@ class BarcodeRepositoryImpl(
     override suspend fun updateDate(id: Long, date: Date) {
         barcodeDao.updateDate(id, date)
     }
+
+    override suspend fun removeBarcode(id: Long) {
+        barcodeDao.remove(id)
+    }
 }
 
 private fun BarcodeType.toBarcodeEntityType(): BarcodeEntityType = when (this) {

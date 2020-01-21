@@ -39,17 +39,21 @@ class HistoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val adapter =
-            HistoryAdapter {
-                val arg = BarcodeParams.arguments(
-                    BarcodeParams(
-                        id = it
+            HistoryAdapter(
+                onItemClickFunc = {
+                    val arg = BarcodeParams.arguments(
+                        BarcodeParams(
+                            id = it
+                        )
                     )
-                )
-                findNavController().navigate(
-                    R.id.action_historyFragment_to_historyItemFragment,
-                    arg
-                )
-            }
+                    findNavController().navigate(
+                        R.id.action_historyFragment_to_historyItemFragment,
+                        arg
+                    )
+                },
+                onItemLongClickFunc = {
+                    viewModel.removeBarcode(it)
+                })
         barcodeContainer.adapter = adapter
         barcodeContainer.layoutManager = LinearLayoutManager(requireContext())
 
@@ -63,7 +67,8 @@ class HistoryFragment : Fragment() {
 }
 
 class HistoryAdapter(
-    private val onItemClickFunc: (Long) -> Unit
+    private val onItemClickFunc: (Long) -> Unit,
+    private val onItemLongClickFunc: (Long) -> Unit
 ) : RecyclerView.Adapter<HistoryViewHolder>() {
 
     private val items = ArrayList<HistoryItem>()
@@ -95,6 +100,10 @@ class HistoryAdapter(
         holder.binding.data.text = item.barcode
         holder.binding.itemLayout.setOnClickListener {
             onItemClickFunc.invoke(id)
+        }
+        holder.binding.itemLayout.setOnLongClickListener {
+            onItemLongClickFunc.invoke(id)
+            return@setOnLongClickListener true
         }
     }
 }

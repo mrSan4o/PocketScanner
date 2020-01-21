@@ -17,19 +17,30 @@ class HistoryViewModel(
 
     fun loadItems() {
         viewModelScope.launch {
-            val items = interactor.findAll()
-
-            _historyItems.value = items.map {
-                HistoryItem(
-                    id = it.id,
-                    date = it.date,
-                    barcode = it.data,
-                    name = it.name
-                )
-            }
+            loadBarcodes()
         }
     }
 
+    fun removeBarcode(id: Long) {
+        viewModelScope.launch {
+            interactor.removeBarcode(id)
+
+            loadBarcodes()
+        }
+    }
+
+    private suspend fun loadBarcodes() {
+        val items = interactor.findAll()
+
+        _historyItems.value = items.map {
+            HistoryItem(
+                id = it.id,
+                date = it.date,
+                barcode = it.data,
+                name = it.name
+            )
+        }
+    }
 }
 
 data class HistoryItem(

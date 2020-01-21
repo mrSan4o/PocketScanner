@@ -9,5 +9,5 @@ interface LiveEvent<T> {
     fun observeForever(observer: Observer<in T>)
 
     @MainThread
-    open fun observe(owner: LifecycleOwner, observer: Observer<in T>)
+    fun observe(owner: LifecycleOwner, observer: Observer<in T>)
 }

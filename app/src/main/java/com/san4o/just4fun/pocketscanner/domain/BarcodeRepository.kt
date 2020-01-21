@@ -9,4 +9,5 @@ interface BarcodeRepository {
     suspend fun create(barcode: CreateBarcodeParams): Long
     suspend fun updateBarcodeName(entityId: Long, name: String)
     suspend fun updateDate(id: Long, date: Date)
+    suspend fun removeBarcode(id: Long)
 }

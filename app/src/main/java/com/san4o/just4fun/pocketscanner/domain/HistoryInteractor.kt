@@ -6,4 +6,8 @@ class HistoryInteractor(
     suspend fun findAll(): List<Barcode> {
         return repository.findAll()
     }
+
+    suspend fun removeBarcode(id: Long) {
+        repository.removeBarcode(id)
+    }
 }

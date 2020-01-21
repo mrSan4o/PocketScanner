@@ -27,4 +27,7 @@ interface BarcodeDao {
 
     @Query("select * from barocode where id = :id")
     suspend fun find(id: Long): BarcodeEntity?
+
+    @Query("delete from barocode where id = :id")
+    suspend fun remove(id: Long)
 }
