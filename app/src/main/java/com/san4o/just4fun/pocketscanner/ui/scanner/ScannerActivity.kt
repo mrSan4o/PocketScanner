@@ -1,5 +1,7 @@
 package com.san4o.just4fun.pocketscanner.ui.scanner
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +17,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class ScannerActivity : AppCompatActivity(),
     NavigationListener {
 
+    private val REQUEST_PERMISSION: Int = 121
+
     private val viewModel: ScannerViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,12 +33,54 @@ class ScannerActivity : AppCompatActivity(),
         setContentView(R.layout.activity_scanner)
 
         viewModel.state.observe(this, Observer { state ->
-            when (state) {
-                is ScannerState.Scanning -> navigate(ScannerNavigation.Scanner)
-                is ScannerState.Result -> navigate(ScannerNavigation.Result(state.params))
-            }
+            setState(state)
 
         })
+
+        requestCameraPermission()
+    }
+
+    private fun setState(state: ScannerState?) {
+        when (state) {
+            is ScannerState.Scanning -> navigate(ScannerNavigation.Scanner)
+            is ScannerState.Result -> navigate(ScannerNavigation.Result(state.params))
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+    }
+
+    private fun requestCameraPermission() {
+        requestPermissions(
+            arrayOf(Manifest.permission.CAMERA),
+            REQUEST_PERMISSION
+        )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == REQUEST_PERMISSION) {
+            var cameraUnGranted = false
+            for ((index, permission) in permissions.withIndex()) {
+                if (permission == Manifest.permission.CAMERA) {
+                    if (grantResults[index] == PackageManager.PERMISSION_DENIED) {
+                        cameraUnGranted = true
+                    }
+                }
+            }
+            if (cameraUnGranted) {
+                requestCameraPermission()
+            } else {
+                setState(viewModel.state.value)
+            }
+        }
     }
 
     override fun onBackPressed() {
